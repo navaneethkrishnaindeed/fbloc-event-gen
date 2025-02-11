@@ -63,8 +63,26 @@ export function activate(context: vscode.ExtensionContext) {
       }
     }
   );
+  
+  let generateBlocCommand = vscode.commands.registerCommand(
+    "extension.generateBlocFiles",
+    async (uri: vscode.Uri) => {
+      const className = await vscode.window.showInputBox({
+        prompt: "Enter class name",
+        placeHolder: "Example: Product",
+      });
 
-  context.subscriptions.push(disposable);
+      if (!className) {
+        vscode.window.showErrorMessage("Class name is required.");
+        return;
+      }
+
+      const dirPath = uri.fsPath;
+      generateBlocFiles(className, dirPath);
+    }
+  ); 
+
+  context.subscriptions.push(disposable, generateBlocCommand);
 }
 
 export function deactivate() {
@@ -202,4 +220,62 @@ function convertToJson(value: any, key: string): string {
 
 function capitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+//================Bloc=====================
+
+function generateBlocFiles(className: string, dirPath: string) {
+  const files = [
+    { name: `${className.toLowerCase()}_bloc.dart`, content: generateBloc(className) },
+    { name: `${className.toLowerCase()}_event.dart`, content: generateEvent(className) },
+    { name: `${className.toLowerCase()}_state.dart`, content: generateState(className) },
+  ];
+
+  files.forEach((file) => {
+    const filePath = path.join(dirPath, file.name);
+    fs.writeFileSync(filePath, file.content);
+  });
+
+  vscode.window.showInformationMessage(`Bloc files created for ${className}!`);
+}
+
+function generateBloc(className: string): string {
+  return `
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fbloc_event_gen/annotations.dart';
+import 'package:equatable/equatable.dart';
+part '${className.toLowerCase()}_event.dart';
+part '${className.toLowerCase()}_state.dart';
+part '${className.toLowerCase()}_bloc.g.dart';
+
+class ${className}Bloc extends Bloc<${className}Event, ${className}State> {
+  ${className}Bloc() : super(${className}State.initial()){
+    ${className}State.registerEvents(this);
+  }
+
+}`;
+}
+
+function generateEvent(className: string): string {
+  return `
+part of '${className.toLowerCase()}_bloc.dart';
+
+@generateEvents
+abstract class ${className}Event extends Equatable {
+  const ${className}Event();
+}
+
+`;
+}
+
+function generateState(className: string): string {
+  return `
+part of '${className.toLowerCase()}_bloc.dart';
+
+@generateStates
+abstract class _$$${className}State {
+  final bool? isLoading = false;
+}
+
+`;
 }

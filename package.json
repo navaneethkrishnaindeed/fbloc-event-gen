@@ -15,13 +15,23 @@
   "menus": {
     "explorer/context": [
       {
+        "command": "extension.generateBlocFiles",
+        "when": "explorerResourceIsFolder",
+        "group": "customGroup"
+      },
+      {
         "command": "extension.generateClass",
         "when": "explorerResourceIsFolder",
         "group": "customGroup"
       }
+      
     ]
   },
   "commands": [
+    {
+      "command": "extension.generateBlocFiles",
+      "title": "📝⚡ Generate Bloc Files (fbloc_event_gen)"
+    },
     {
       "command": "extension.generateClass",
       "title": " 🏗️👨‍💻 Generate Dart Models From JSON"
