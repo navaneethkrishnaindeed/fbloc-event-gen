@@ -85,12 +85,12 @@ function generateDartClass(className: string, json: any, classes: string[]): str
   let classProperties = Object.keys(json)
     .map((key) => {
       let type = getDartType(json[key], key, classes);
-      return `  final ${type} ${key};`;
+      return `  final ${type}? ${key};`;
     })
     .join("\n");
 
   let constructorParams = Object.keys(json)
-    .map((key) => `    required this.${key},`)
+    .map((key) => `     this.${key},`)
     .join("\n");
 
   let fromJsonParams = Object.keys(json)
@@ -169,12 +169,12 @@ function convertFromJson(value: any, key: string): string {
 function convertToJson(value: any, key: string): string {
   if (Array.isArray(value)) {
     if (value.length > 0 && typeof value[0] === "object") {
-      return `${key}.map((item) => item.toJson()).toList()`;
+      return `${key}?.map((item) => item.toJson()).toList()`;
     }
     return key;
   }
   if (typeof value === "object" && value !== null) {
-    return `${key}.toJson()`;
+    return `${key}?.toJson()`;
   }
   return key;
 }
