@@ -23,7 +23,6 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      // Show input box for class name
       const className = await vscode.window.showInputBox({
         prompt: "Choose a name for your class",
         placeHolder: "Enter class name",
@@ -34,7 +33,6 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      // Show input box for JSON input
       const jsonInput = await vscode.window.showInputBox({
         prompt: "Paste your JSON data",
         placeHolder: "Enter JSON here",
@@ -53,17 +51,15 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      // Parse JSON and generate class
       const jsonData = JSON.parse(jsonInput);
       const classCode = generateClassFromJson(className, jsonData);
 
-      // Write to a file
       const filePath = path.join(uri.fsPath, `${className}.dart`);
       try {
         fs.writeFileSync(filePath, classCode);
         vscode.window.showInformationMessage(`Class ${className} created successfully.`);
       } catch (error) {
-        vscode.window.showErrorMessage("Failed to create class file: " );
+        vscode.window.showErrorMessage("Failed to create class file: " + error);
       }
     }
   );
@@ -74,14 +70,21 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate() {
   console.log("Class Generator Extension is now deactivated.");
 }
-
 function generateClassFromJson(className: string, json: any): string {
-  let classes: string[] = [];
-  let mainClass = generateDartClass(className, json, classes);
-  return mainClass + "\n\n" + classes.join("\n\n");
+  let classes = new Map<string, string>(); // Store unique classes
+  generateDartClass(className, json, classes); // Generate all classes first
+
+  // Ensure the main class appears first and is not duplicated
+  let mainClass = classes.get(className);
+  classes.delete(className);
+
+  return (mainClass ? mainClass + "\n\n" : "") + Array.from(classes.values()).join("\n\n");
 }
 
-function generateDartClass(className: string, json: any, classes: string[]): string {
+
+function generateDartClass(className: string, json: any, classes: Map<string, string>): string {
+  if (classes.has(className)) return ""; // Prevent duplicate classes
+
   let classProperties = Object.keys(json)
     .map((key) => {
       let type = getDartType(json[key], key, classes);
@@ -90,7 +93,7 @@ function generateDartClass(className: string, json: any, classes: string[]): str
     .join("\n");
 
   let constructorParams = Object.keys(json)
-    .map((key) => `     this.${key},`)
+    .map((key) => `    this.${key},`)
     .join("\n");
 
   let fromJsonParams = Object.keys(json)
@@ -101,7 +104,15 @@ function generateDartClass(className: string, json: any, classes: string[]): str
     .map((key) => `      '${key}': ${convertToJson(json[key], key)},`)
     .join("\n");
 
-  return `
+  let copyWithParams = Object.keys(json)
+    .map((key) => `${getDartType(json[key], key, classes)}? ${key},`)
+    .join("\n");
+
+  let copyWithAssignments = Object.keys(json)
+    .map((key) => `${key}: ${key} ?? this.${key},`)
+    .join("\n");
+
+  let dartClass = `
 class ${className} {
 ${classProperties}
 
@@ -120,11 +131,21 @@ ${fromJsonParams}
 ${toJsonParams}
     };
   }
-}`;
-}
 
-// Determines the Dart type for a given JSON value
-function getDartType(value: any, key: string, classes: string[]): string {
+  ${className} copyWith({
+${copyWithParams}
+  }) {
+    return ${className}(
+${copyWithAssignments}
+    );
+  }
+}`;
+  
+  classes.set(className, dartClass); // Store unique class
+
+  return dartClass;
+}
+function getDartType(value: any, key: string, classes: Map<string, string>): string {
   if (typeof value === "number") {
     return value % 1 === 0 ? "int" : "double";
   }
@@ -143,13 +164,14 @@ function getDartType(value: any, key: string, classes: string[]): string {
   }
   if (typeof value === "object" && value !== null) {
     let className = capitalize(key);
-    classes.push(generateDartClass(className, value, classes));
+    if (!classes.has(className)) {
+      classes.set(className, generateDartClass(className, value, classes)); // Store only unique classes
+    }
     return className;
   }
   return "dynamic";
 }
 
-// Converts JSON values when deserializing (from JSON to Dart object)
 function convertFromJson(value: any, key: string): string {
   if (Array.isArray(value)) {
     if (value.length > 0 && typeof value[0] === "object") {
@@ -165,7 +187,6 @@ function convertFromJson(value: any, key: string): string {
   return `json['${key}']`;
 }
 
-// Converts Dart values when serializing (to JSON)
 function convertToJson(value: any, key: string): string {
   if (Array.isArray(value)) {
     if (value.length > 0 && typeof value[0] === "object") {
@@ -179,7 +200,6 @@ function convertToJson(value: any, key: string): string {
   return key;
 }
 
-// Capitalizes the first letter of a string
 function capitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
