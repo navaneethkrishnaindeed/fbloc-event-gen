@@ -74,10 +74,11 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate() {
   console.log("Class Generator Extension is now deactivated.");
 }
+
 function generateClassFromJson(className: string, json: any): string {
   let classes: string[] = [];
-  let classCode = generateDartClass(className, json, classes);
-  return classes.join("\n\n") + "\n\n" + classCode;
+  let mainClass = generateDartClass(className, json, classes);
+  return mainClass + "\n\n" + classes.join("\n\n");
 }
 
 function generateDartClass(className: string, json: any, classes: string[]): string {
