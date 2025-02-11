@@ -17,14 +17,14 @@
       {
         "command": "extension.generateClass",
         "when": "explorerResourceIsFolder",
-        "group": "navigation"
+        "group": "customGroup"
       }
     ]
   },
   "commands": [
     {
       "command": "extension.generateClass",
-      "title": "Generate Class with XXX Here"
+      "title": " 🏗️👨‍💻 Generate Dart Models From JSON"
     }
   ]
   },
