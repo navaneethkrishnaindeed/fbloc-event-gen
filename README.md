@@ -12,11 +12,11 @@ Then This is the Package u will ever need...
 
 A powerful code generation package that supercharges your Flutter Bloc implementation with zero boilerplate! Generate events, states, and utilities automatically.
 
-![state image Placeholder](https://raw.githubusercontent.com/navaneethkrishnaindeed/bloc_gen/refs/heads/main/images/basestate.png)
+![state image Placeholder](https://raw.githubusercontent.com/navaneethkrishnaindeed/fbloc-event-gen/refs/heads/main/media/basestate.png)
 
-![calling event image place holder](https://raw.githubusercontent.com/navaneethkrishnaindeed/bloc_gen/refs/heads/main/images/callingevent.png)
+![calling event image place holder](https://raw.githubusercontent.com/navaneethkrishnaindeed/fbloc-event-gen/refs/heads/main/media/callingevent.png)
 
-![event image place holder](https://raw.githubusercontent.com/navaneethkrishnaindeed/bloc_gen/refs/heads/main/images/event.png)
+![event image place holder](https://raw.githubusercontent.com/navaneethkrishnaindeed/fbloc-event-gen/refs/heads/main/media/event.png)
 
 
 ## 📚 Table of Contents

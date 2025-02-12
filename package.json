@@ -1,12 +1,13 @@
 {
   "name": "fbloc-event-gen",
-  "displayName": "fbloc_event_gen",
-  "description": "Code generation for bloc",
+  "displayName": "Fbloc Event Gen",
+  "description": "Generate All state, event and even bloc code from a SINGLE VARIABLE",
   "version": "0.0.1",
+  "publisher": "NavaneethKrishna",
   "icon": "logo.webp",
   "repository": {
     "type": "git",
-    "url": "https://github.com/navaneethkrishnaindeed/bloc_gen.git"
+    "url": "https://github.com/navaneethkrishnaindeed/fbloc-event-gen.git"
 },
   "engines": {
     "vscode": "^1.97.0"
