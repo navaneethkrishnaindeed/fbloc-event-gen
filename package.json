@@ -4,7 +4,7 @@
   "description": "Generate All state, event and even bloc code from a SINGLE VARIABLE",
   "version": "0.0.1",
   "publisher": "NavaneethKrishna",
-  "icon": "logo.webp",
+  "icon": "media/logo.webp",
   "repository": {
     "type": "git",
     "url": "https://github.com/navaneethkrishnaindeed/fbloc-event-gen.git"
