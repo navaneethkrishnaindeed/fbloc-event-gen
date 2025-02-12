@@ -1,71 +1,335 @@
-# fbloc-event-gen README
+# 🚀 Flutter Bloc Generator
 
-This is the README for your extension "fbloc-event-gen". After writing up a brief description, we recommend including the following sections.
+Too much Unwanted freezed Bloc code... ??
 
-## Features
+Generate All state, event and even bloc code from a SINGLE VARIABLE
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+Update State with without having to Rememeber all those events.. in a single context.Set.. Fn()
 
-For example if there is an image subfolder under your extension project workspace:
+With all options to CUSTOMISE your bloc and event code with out hastle
 
-\!\[feature X\]\(images/feature-x.png\)
+Then This is the Package u will ever need... 
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+A powerful code generation package that supercharges your Flutter Bloc implementation with zero boilerplate! Generate events, states, and utilities automatically.
 
-## Requirements
+![state image Placeholder](https://raw.githubusercontent.com/navaneethkrishnaindeed/bloc_gen/refs/heads/main/images/basestate.png)
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+![calling event image place holder](https://raw.githubusercontent.com/navaneethkrishnaindeed/bloc_gen/refs/heads/main/images/callingevent.png)
 
-## Extension Settings
+![event image place holder](https://raw.githubusercontent.com/navaneethkrishnaindeed/bloc_gen/refs/heads/main/images/event.png)
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
 
-For example:
+## 📚 Table of Contents
+- [Installation](#-installation)
+- [Features](#-features)
+- [Usage](#-usage)
+  - [@GenerateEvents](#-generateevents)
+  - [@GenerateStates](#-generatestates)
+- [Examples](#-examples)
+- [Migration Guide](#-migration-guide)
+- [Contributing](#-contributing)
+- [License](#-license)
 
-This extension contributes the following settings:
+## 📦 Installation
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+Add to your `pubspec.yaml`:
 
-## Known Issues
+```yaml
+dependencies:
+  fbloc_event_gen: ^3.0.3
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+dev_dependencies:
+  build_runner: ^2.4.6
+```
 
-## Release Notes
+Run:
+```bash
+flutter pub get
+```
 
-Users appreciate release notes as you update your extension.
+## ✨ Features
 
-### 1.0.0
+- 🎯 **Two Powerful Annotations**
+  - `@GenerateEvents` - Generate events from factory constructors
+  - `@GenerateStates` - Generate complete state management code
+- 🔄 **Automatic Generation**
+  - Type-safe events and states
+  - BuildContext extensions
+  - Immutable state updates
+- 🛡️ **Built-in Safety**
+  - Null safety support
+  - Equatable implementation
+  - Type checking
 
-Initial release of ...
+## 🎯 Usage
 
-### 1.0.1
+### @GenerateEvents
 
-Fixed issue #.
+Use `@GenerateEvents` when you need event-only generation. Perfect for defining bloc events through factory constructors.
 
-### 1.1.0
+```dart
+import 'package:flutter_bloc_generator/annotations.dart';
 
-Added features X, Y, and Z.
+@GenerateEvents
+abstract class BaseEvent extends Equatable {
+  const BaseEvent();
+  
+  // Factory constructors define your events
+  factory BaseEvent.userLoggedIn({
+    required String userId,
+    required String token,
+    bool? rememberMe,
+  });
+  
+  factory BaseEvent.updateProfile({
+    required UserModel user,
+  });
+  
+  factory BaseEvent.logOut();
+}
+```
 
----
+#### Generated Code ✨
 
-## Following extension guidelines
+```dart
+// Generated events.g.dart
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+class UserLoggedIn extends BaseEvent {
+  final String userId;
+  final String token;
+  final bool? rememberMe;
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+  const UserLoggedIn({
+    required this.userId,
+    required this.token,
+    this.rememberMe,
+  });
 
-## Working with Markdown
+  @override
+  List<Object?> get props => [userId, token, rememberMe];
+}
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+class UpdateProfile extends BaseEvent {
+  final UserModel user;
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+  const UpdateProfile({required this.user});
 
-## For more information
+  @override
+  List<Object?> get props => [user];
+}
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+class LogOut extends BaseEvent {
+  const LogOut();
 
-**Enjoy!**
+  @override
+  List<Object?> get props => [];
+}
+```
+
+### @GenerateStates
+
+Use `@GenerateStates` for complete state management generation. Define your state variables in an abstract class.
+
+```dart
+import 'package:flutter_bloc_generator/annotations.dart';
+
+@GenerateStates
+abstract class _$$BaseState {
+  final bool isAuthenticated = false;
+  final bool isLoading = false;
+  final UserModel? currentUser = null;
+  final List<String> errorMessages = [];
+  final AuthStatus authStatus = AuthStatus.initial;
+  final Map<String, dynamic> userData = {};
+}
+```
+
+#### Generated Code ✨
+
+```dart
+// Generated state.g.dart
+
+/// 1️⃣ State Class Definition
+class BaseState extends Equatable {
+  final bool isAuthenticated;
+  final bool isLoading;
+  final UserModel? currentUser;
+  final List<String> errorMessages;
+  final AuthStatus authStatus;
+  final Map<String, dynamic> userData;
+
+  const BaseState({
+    required this.isAuthenticated,
+    required this.isLoading,
+    this.currentUser,
+    required this.errorMessages,
+    required this.authStatus,
+    required this.userData,
+  });
+
+  /// 2️⃣ State Mutation Utilities
+  BaseState copyWith({
+    bool? isAuthenticated,
+    bool? isLoading,
+    UserModel? currentUser,
+    List<String>? errorMessages,
+    AuthStatus? authStatus,
+    Map<String, dynamic>? userData,
+  }) {
+    return BaseState(
+      isAuthenticated: isAuthenticated ?? this.isAuthenticated,
+      isLoading: isLoading ?? this.isLoading,
+      currentUser: currentUser ?? this.currentUser,
+      errorMessages: errorMessages ?? this.errorMessages,
+      authStatus: authStatus ?? this.authStatus,
+      userData: userData ?? this.userData,
+    );
+  }
+
+  /// 3️⃣ Initial State Factory
+  static BaseState initial() {
+    return BaseState(
+      isAuthenticated: false,
+      isLoading: false,
+      currentUser: null,
+      errorMessages: [],
+      authStatus: AuthStatus.initial,
+      userData: {},
+    );
+  }
+
+  /// 4️⃣ State Update Events
+  class UpdateIsAuthenticatedEvent extends BaseEvent {
+    final bool isAuthenticated;
+    const UpdateIsAuthenticatedEvent({required this.isAuthenticated});
+    @override
+    List<Object?> get props => [isAuthenticated];
+  }
+  // ... events for each state variable
+
+  /// 5️⃣ Event Handlers Registration
+  static void registerEvents(BaseBloc bloc) {
+    bloc.on<UpdateIsAuthenticatedEvent>((event, emit) {
+      emit(bloc.state.copyWith(isAuthenticated: event.isAuthenticated));
+    });
+    bloc.on<UpdateIsLoadingEvent>((event, emit) {
+      emit(bloc.state.copyWith(isLoading: event.isLoading));
+    });
+    // ... handlers for all events
+  }
+
+  /// 6️⃣ Equatable Implementation
+  @override
+  List<Object?> get props => [
+    isAuthenticated,
+    isLoading,
+    currentUser,
+    errorMessages,
+    authStatus,
+    userData,
+  ];
+}
+
+/// 7️⃣ BuildContext Extensions
+extension BaseBlocContextExtension on BuildContext {
+  void setBaseBlocState({
+    bool? isAuthenticated,
+    bool? isLoading,
+    UserModel? currentUser,
+    List<String>? errorMessages,
+    AuthStatus? authStatus,
+    Map<String, dynamic>? userData,
+  }) {
+    final bloc = read<BaseBloc>();
+    if (isAuthenticated != null) {
+      bloc.add(UpdateIsAuthenticatedEvent(isAuthenticated: isAuthenticated));
+    }
+    if (isLoading != null) {
+      bloc.add(UpdateIsLoadingEvent(isLoading: isLoading));
+    }
+    // ... handlers for all state updates
+  }
+}
+```
+
+## 🛠️ Implementation
+
+### Bloc Class
+
+```dart
+class BaseBloc extends Bloc<BaseEvent, BaseState> {
+  BaseBloc() : super(BaseState.initial()) {
+    // Register all event handlers automatically
+    BaseState.registerEvents(this);
+    
+    // Add your custom event handlers
+    on<UserLoggedIn>(_onUserLoggedIn);
+  }
+
+  Future<void> _onUserLoggedIn(
+    UserLoggedIn event,
+    Emitter<BaseState> emit,
+  ) async {
+    emit(state.copyWith(isLoading: true));
+    // ... authentication logic
+    emit(state.copyWith(
+      isLoading: false,
+      isAuthenticated: true,
+    ));
+  }
+}
+```
+
+### Widget Usage
+
+```dart
+class MyWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Traditional way
+    context.read<BaseBloc>().add(
+      UpdateProfile(user: updatedUser)
+    );
+
+    // Using generated extension (Cleaner!)
+    context.setBaseBlocState(
+      isLoading: true,
+      currentUser: updatedUser,
+      authStatus: AuthStatus.authenticated,
+    );
+  }
+}
+```
+
+## 🎯 Best Practices
+
+1. **State Variables**
+   - Keep state classes focused and minimal
+   - Use meaningful variable names
+   - Consider nullability carefully
+
+2. **Event Generation**
+   - Use descriptive factory constructor names
+   - Group related events together
+   - Document complex event parameters
+
+3. **State Updates**
+   - Prefer extension methods for simple updates
+   - Use traditional events for complex logic
+   - Keep state immutable
+
+## 🔄 Migration Guide
+
+### 2.0.0 to 3.0.0
+- Update annotation imports
+- Rename existing state classes to include `_$$` prefix
+- Add initial values to state variables
+- Run code generation
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [contributing guide](CONTRIBUTING.md) for details.
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
