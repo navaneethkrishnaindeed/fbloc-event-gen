@@ -2,7 +2,7 @@
   "name": "fbloc-event-gen",
   "displayName": "Fbloc Event Gen",
   "description": "Generate All state, event and even bloc code from a SINGLE VARIABLE",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "NavaneethKrishna",
   "icon": "media/logo.webp",
   "repository": {
