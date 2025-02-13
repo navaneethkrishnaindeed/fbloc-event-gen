@@ -101,7 +101,7 @@ function generateClassFromJson(className: string, json: any): string {
 
 
 function generateDartClass(className: string, json: any, classes: Map<string, string>): string {
-  if (classes.has(className)) return ""; // Prevent duplicate classes
+  if (classes.has(className)) {return "";} // Prevent duplicate classes
 
   let classProperties = Object.keys(json)
     .map((key) => {
