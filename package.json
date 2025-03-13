@@ -8,9 +8,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/navaneethkrishnaindeed/fbloc-event-gen.git"
-},
+  },
   "engines": {
-    "vscode": "^1.97.0"
+    "vscode": "^1.96.0"
   },
   "categories": [
     "Other"
@@ -18,31 +18,30 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
-  "menus": {
-    "explorer/context": [
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "extension.generateBlocFiles",
+          "when": "explorerResourceIsFolder",
+          "group": "customGroup"
+        },
+        {
+          "command": "extension.generateClass",
+          "when": "explorerResourceIsFolder",
+          "group": "customGroup"
+        }
+      ]
+    },
+    "commands": [
       {
         "command": "extension.generateBlocFiles",
-        "when": "explorerResourceIsFolder",
-        "group": "customGroup"
+        "title": "📝⚡ Generate Bloc Files (fbloc_event_gen)"
       },
       {
         "command": "extension.generateClass",
-        "when": "explorerResourceIsFolder",
-        "group": "customGroup"
+        "title": " 🏗️👨‍💻 Generate Dart Models From JSON"
       }
-      
     ]
-  },
-  "commands": [
-    {
-      "command": "extension.generateBlocFiles",
-      "title": "📝⚡ Generate Bloc Files (fbloc_event_gen)"
-    },
-    {
-      "command": "extension.generateClass",
-      "title": " 🏗️👨‍💻 Generate Dart Models From JSON"
-    }
-  ]
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
