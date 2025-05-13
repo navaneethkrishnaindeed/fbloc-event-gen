@@ -224,10 +224,16 @@ function capitalize(str: string): string {
 //================Bloc=====================
 
 function generateBlocFiles(className: string, dirPath: string) {
+  // Convert camelCase to snake_case
+  const snakeCaseClassName = className
+    .split(/(?=[A-Z])/)
+    .join('_')
+    .toLowerCase();
+  
   const files = [
-    { name: `${className.toLowerCase()}_bloc.dart`, content: generateBloc(className) },
-    { name: `${className.toLowerCase()}_event.dart`, content: generateEvent(className) },
-    { name: `${className.toLowerCase()}_state.dart`, content: generateState(className) },
+    { name: `${snakeCaseClassName}_bloc.dart`, content: generateBloc(className) },
+    { name: `${snakeCaseClassName}_event.dart`, content: generateEvent(className) },
+    { name: `${snakeCaseClassName}_state.dart`, content: generateState(className) },
   ];
 
   files.forEach((file) => {
