@@ -48,7 +48,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  fbloc_event_gen: ^3.2.2
+  fbloc_event_gen: ^3.2.6
 
 dev_dependencies:
   build_runner: ^2.4.6
@@ -75,6 +75,31 @@ flutter pub get
 
 ## 🎯 Usage
 
+
+### @GenerateStates
+
+Use `@GenerateStates` for complete state management generation. Define your state variables in the abstract class in the following format.
+
+```dart
+part of 'example_bloc.dart';
+
+@generateStates
+abstract class _$$ExampleState {
+  final bool isLoading = false;
+  final int counter = 0;
+  final String? data = "You have pushed the button this many times:";
+  final String? dss = null;
+  final List<String> listNm = List.generate(10, (index) => 'item $index');
+  final Map<String, int> mapgenerate = Map<String, int>.fromEntries(
+    ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
+        .map((e) => MapEntry<String, int>(e, int.parse(e))),
+  );
+  final Map<String?, String?> list = {};
+  final List<bool> selectedDays = [];
+  final Map<dynamic, dynamic>? test = {};
+}
+```
+
 ### @GenerateEvents
 
 Use `@GenerateEvents` when you need event-only generation. Perfect for defining bloc events through factory constructors.
@@ -85,25 +110,66 @@ import 'package:flutter_bloc_generator/annotations.dart';
 @generateEvents
 abstract class ExampleEvent extends Equatable {
   const ExampleEvent();
-   const factory ExampleEvent.userLoggedIn({
-    required String userId,
-    required String token,
-    bool? rememberMe,
-  }) = UserLoggedIn;
   
-  const factory ExampleEvent.updateProfile({
-    required String user,
-  }) = UpdateProfile;
+   const factory ExampleEvent.userLoggedIn({required String userId,required String token,
+   bool? rememberMe,}) = UserLoggedIn;
+  
+  const factory ExampleEvent.updateProfile({required String user,}) = UpdateProfile;
   
   const factory ExampleEvent.logOut() = LogOut;
 }
-
 ```
 
-#### Generated Code ✨
+
+### Implementation Example
+
+#### Widget Usage
 
 ```dart
+class MyWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Traditional way
+    BlocProvider.of<ExampleBloc>(context).add(
+      UpdateCounterEvent(counter: 42)
+    );
 
+    // Using generated extension (Cleaner!)
+    context.setExampleBlocState(
+      counter: 42
+    );
+  }
+}
+```
+
+#### Bloc Class
+
+```dart
+class ExampleBloc extends Bloc<ExampleEvent, ExampleState> {
+  ExampleBloc() : super(ExampleState.initial()) {
+    ExampleState.registerEvents(this);
+    on<UserLoggedIn>(_onUserLoggedIn);
+    on<UpdateProfile>(_onUpdateProfile); 
+    on<LogOut>(_onLogOut);
+  }   
+  void _onUserLoggedIn(UserLoggedIn event, Emitter<ExampleState> emit) {
+    emit(state.copyWith(isLoading: true));
+  }
+
+  void _onUpdateProfile(UpdateProfile event, Emitter<ExampleState> emit) {
+    emit(state.copyWith(isLoading: true));
+  } 
+  void _onLogOut(LogOut event, Emitter<ExampleState> emit) {
+    emit(state.copyWith(isLoading: true));
+  }
+}
+```
+
+## 🔍 Generated Code Examples
+
+### @GenerateEvents Generated Code
+
+```dart
 // **************************************************************************
 // EventGenerator
 // **************************************************************************
@@ -137,39 +203,12 @@ class LogOut extends ExampleEvent {
 }
 ```
 
-### @GenerateStates
-
-Use `@GenerateStates` for complete state management generation. Define your state variables in an abstract class.
+### @GenerateStates Generated Code
 
 ```dart
-part of 'example_bloc.dart';
-
-@generateStates
-abstract class _$$ExampleState {
-  final bool isLoading = false;
-  final int counter = 0;
-  final String? data = "You have pushed the button this many times:";
-  final String? dss = null;
-  final List<String> listNm = List.generate(10, (index) => 'item $index');
-  final Map<String, int> mapgenerate = Map<String, int>.fromEntries(
-    ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
-        .map((e) => MapEntry<String, int>(e, int.parse(e))),
-  );
-  final Map<String?, String?> list = {};
-  final List<bool> selectedDays = [];
-  final Map<dynamic, dynamic>? test = {};
-}
-
-```
-
-#### Generated Code ✨
-
-```dart
-
 // **************************************************************************
 // StateGenerator
 // **************************************************************************
-
 
 // Events Generated for corresponding states in State Class
 class UpdateIsLoadingEvent extends ExampleEvent {
@@ -187,7 +226,6 @@ class UpdateCounterEvent extends ExampleEvent {
   @override
   List<Object?> get props => [counter];
 }
-// ... So and So unique event classes for each state properties
 
 /// A state class that represents the complete state of the ExampleBloc.
 /// This class is immutable and extends Equatable for value comparison.
@@ -384,11 +422,11 @@ extension ExampleBlocContextExtension on BuildContext {
   }) {
     final myBloc = read<ExampleBloc>(); // Read the MyBloc instance
     if (isLoading != UnspecifiedDataType.instance) {
-      myBloc.add(UpdateIsLoadingEvent(isLoading: isLoading as bool));
+      myBloc.add(UpdateIsLoadingEvent(isLoading: isLoading as bool?));
     }
 
     if (counter != UnspecifiedDataType.instance) {
-      myBloc.add(UpdatecounterEvent(counter: counter as int));
+      myBloc.add(UpdateCounterEvent(counter: counter as int));
     }
 
     if (data != UnspecifiedDataType.instance) {
@@ -399,76 +437,35 @@ extension ExampleBlocContextExtension on BuildContext {
       myBloc.add(UpdateDssEvent(dss: dss as String?));
     }
 
+    if (iterable != UnspecifiedDataType.instance) {
+      myBloc.add(UpdateIterableEvent(iterable: iterable.cast<String>()));
+    }
+
     if (listNm != UnspecifiedDataType.instance) {
-      myBloc.add(UpdateListNmEvent(listNm: listNm as List<String>));
+      myBloc.add(UpdateListNmEvent(listNm: listNm.cast<String>()));
     }
 
     if (mapgenerate != UnspecifiedDataType.instance) {
       myBloc.add(
-          UpdateMapgenerateEvent(mapgenerate: mapgenerate as Map<String, int>));
+          UpdateMapgenerateEvent(mapgenerate: mapgenerate.cast<String, int>()));
     }
 
     if (list != UnspecifiedDataType.instance) {
-      myBloc.add(UpdateListEvent(list: list as Map<String?, String?>));
+      myBloc.add(UpdateListEvent(list: list.cast<String?, String?>()));
     }
 
     if (selectedDays != UnspecifiedDataType.instance) {
       myBloc.add(
-          UpdateSelectedDaysEvent(selectedDays: selectedDays as List<bool>));
+          UpdateSelectedDaysEvent(selectedDays: selectedDays.cast<bool>()));
     }
 
     if (test != UnspecifiedDataType.instance) {
-      myBloc.add(UpdateTestEvent(test: test as Map<dynamic, dynamic>?));
+      myBloc.add(UpdateTestEvent(test: test.cast<dynamic, dynamic>()));
     }
   }
 }
 ```
 
-## 🛠️ Implementation
-
-### Bloc Class
-
-```dart
-
-class ExampleBloc extends Bloc<ExampleEvent, ExampleState> {
-  ExampleBloc() : super(ExampleState.initial()) {
-    ExampleState.registerEvents(this);
-    on<UserLoggedIn>(_onUserLoggedIn);
-    on<UpdateProfile>(_onUpdateProfile); 
-    on<LogOut>(_onLogOut);
-  }   
-  void _onUserLoggedIn(UserLoggedIn event, Emitter<ExampleState> emit) {
-    emit(state.copyWith(isLoading: true));
-  }
-
-  void _onUpdateProfile(UpdateProfile event, Emitter<ExampleState> emit) {
-    emit(state.copyWith(isLoading: true));
-  } 
-  void _onLogOut(LogOut event, Emitter<ExampleState> emit) {
-    emit(state.copyWith(isLoading: true));
-  }
-}
-
-```
-
-### Widget Usage
-
-```dart
-class MyWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // Traditional way
-    BlocProvider.of<ExampleBloc>(context).add(
-      UpdateCounterEvent(counter: 42)
-    );
-
-    // Using generated extension (Cleaner!)
-    context.setExampleBlocState(
-      counter: 42
-    );
-  }
-}
-```
 
 ## 🎯 Best Practices
 
