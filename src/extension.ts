@@ -245,14 +245,18 @@ function generateBlocFiles(className: string, dirPath: string) {
 }
 
 function generateBloc(className: string): string {
+  const snakeCaseClassName = className
+    .split(/(?=[A-Z])/)
+    .join('_')
+    .toLowerCase();
   return `
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fbloc_event_gen/annotations.dart';
 import 'package:equatable/equatable.dart';
-part '${className.toLowerCase()}_event.dart';
-part '${className.toLowerCase()}_state.dart';
-part '${className.toLowerCase()}_bloc.g.dart';
+part '${snakeCaseClassName}_event.dart';
+part '${snakeCaseClassName}_state.dart';
+part '${snakeCaseClassName}_bloc.g.dart';
 
 class ${className}Bloc extends Bloc<${className}Event, ${className}State> {
   ${className}Bloc() : super(${className}State.initial()){
