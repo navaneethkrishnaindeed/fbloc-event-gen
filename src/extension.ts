@@ -267,8 +267,12 @@ class ${className}Bloc extends Bloc<${className}Event, ${className}State> {
 }
 
 function generateEvent(className: string): string {
+  const snakeCaseClassName = className
+  .split(/(?=[A-Z])/)
+  .join('_')
+  .toLowerCase();
   return `
-part of '${className.toLowerCase()}_bloc.dart';
+part of '${snakeCaseClassName}_bloc.dart';
 
 @generateEvents
 abstract class ${className}Event extends Equatable {
@@ -279,8 +283,12 @@ abstract class ${className}Event extends Equatable {
 }
 
 function generateState(className: string): string {
+  const snakeCaseClassName = className
+  .split(/(?=[A-Z])/)
+  .join('_')
+  .toLowerCase();
   return `
-part of '${className.toLowerCase()}_bloc.dart';
+part of '${snakeCaseClassName}_bloc.dart';
 
 @generateStates
 abstract class _$$${className}State {
